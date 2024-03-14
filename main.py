@@ -44,7 +44,7 @@ def main():
         print("2. Remove Book")
         print("3. Search Book")
         print("4. Display Books")
-        print("5. Exit")
+        #print("5. Exit")
 
         choice = input("Enter your choice: ")
 
