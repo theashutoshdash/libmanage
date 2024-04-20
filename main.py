@@ -1,4 +1,5 @@
 import csv
+import re
 
 class LibraryManagementSystem:
     def __init__(self):
@@ -110,10 +111,89 @@ class LibraryManagementSystem:
         else:
             self.add_student(reg_number, name)
             print(f"Signup successful. Welcome, {name}!")
+    def login():
+    selector=True
+    print("Select affiliation")
+    print("1) Student")
+    print("2) Employee")
+    while(selector):
+        try:
+            aff=int(input("Enter choice : "))
+            if(aff==1):
+                nu=input("Username: ")
+                re=input("Password: ")
+                signup_or_login(nu,re)
+                selector=False
+            elif(aff==2):
+                nu=input("Username: ")
+                re=input("Password: ")
+                signup_or_login(nu,re)
+                selector=False
+            else:
+                print("Enter valid value")
+        except :
+            print("Enter Integer Value") 
+    def signup():
+        regx=True
+        name=str(input("Enter Name : "))
+        while(regx):
+            reg=str(input("Enter Registration Number : "))
+            if(re.match('[1-2][0-9][A-Za-z]{3}[0-9]{4}',reg)):
+                if(int(reg[-4:])>0):
+                    self.add_student(reg, name)                                       
+            if(regx):
+                print("Invalid Registration Number")
+    def stu_page():
+        selector=True
+        while(selector):
+            print(f{'Welcome to VIT Central Library'})
+            print("1) Issue\n2) Search\n3) Return\n4) Fine Payment\n5) Exit")
+            try:
+                ch=int(input("Enter choice : "))
+                if(ch==1):
+                    pass
+                    self.issue_book()                                          
+                elif(ch==2):
+                    pass
+                    self.search()                                        
+                elif(ch==3):
+                    self.book_return()
+                    pass                                         
+                elif(ch==4):
+                    self.fine_payment()
+                    pass                                        
+                elif(ch==5):
+                    selector=False
+                else:
+                    print("\nEnter valid choice (Between 1 and 4)\n")
+            except :
+                print("\nEnter Integer Value\n") 
+    def emp_page():
+        selector=True
+        while(selector):
+            print("Enter Choice")
+            print("1) Add Book")
+            print("2) Update Shelf")
+            print("3) Exit")
+            try:
+                aff=int(input("Enter choice : "))
+                if(aff==1):
+                    self.add_book()                                      
+                    pass
+                elif(aff==2):
+                    self.update_shelf()                                      
+                    pass
+                elif(aff==3):
+                    selector=False
+                else:
+                    print("\nEnter valid choice (1-3)\n")
+            except :
+                print("\nEnter Integer Value\n") 
+
 
 lib=LibraryManagementSystem()
 k="Periyar EVR Library"
 print(k.center(60,'='))
 
-print(f"\n{'Login/Sign-in' :>60}")
-print()
+
+
