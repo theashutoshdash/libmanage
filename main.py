@@ -4,20 +4,20 @@ class LibraryManagementSystem:
     def __init__(self):
         self.students = {}
         self.books = {}
-        self.filename = "library_data.csv"  # CSV file to store data
+        self.filename = "library_data.csv"  
 
-    def add_student(self, reg_number, name):
-        if reg_number not in self.students:
-            self.students[reg_number] = {
+    def add_student(self, reg, name):
+        if reg not in self.students:
+            self.students[reg] = {
                 'name': name,
                 'history': [],
                 'fine_amount': 0.0,
                 'status': 'Active'
             }
-            print(f"Student {name} with registration number {reg_number} added successfully.")
+            print(f"Student {name} with registration number {reg} added successfully.")
             self.write_data_to_csv()
         else:
-            print(f"Student with registration number {reg_number} already exists.")
+            print(f"Student with registration number {reg} already exists.")
 
     def add_book(self, book_id, title, author, pub_year, buying_year):
         if book_id not in self.books:
@@ -68,12 +68,10 @@ class LibraryManagementSystem:
     def write_data_to_csv(self):
         with open(self.filename, 'w', newline='') as file:
             writer = csv.writer(file)
-            # Write student data
             writer.writerow(['Registration Number', 'Name', 'Status', 'Fine Amount'])
             for reg_number, details in self.students.items():
                 writer.writerow([reg_number, details['name'], details['status'], details['fine_amount']])
             
-            # Write book data
             writer.writerow(['Book ID', 'Title', 'Author', 'Times Issued'])
             for book_id, details in self.books.items():
                 writer.writerow([book_id, details['title'], details['author'], details['times_issued']])
@@ -103,6 +101,15 @@ class LibraryManagementSystem:
             print(f"Number of Times Issued: {book['times_issued']}")
         else:
             print("Book not found.")
+    def signup_or_login(self, name, reg_number):
+        if reg_number in self.students:
+            if self.students[reg_number]['name'] == name:
+                print(f"Login successful. Welcome, {name}!")
+            else:
+                print("Invalid credentials. Login failed.")
+        else:
+            self.add_student(reg_number, name)
+            print(f"Signup successful. Welcome, {name}!")
 
 lib=LibraryManagementSystem()
 k="Periyar EVR Library"
