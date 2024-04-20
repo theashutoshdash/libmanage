@@ -1,46 +1,49 @@
+import csv
+
 class LibraryManagementSystem:
     def __init__(self):
-        self.students = {}  # Dictionary to store student details
-        self.books = {}     # Dictionary to store book details
+        self.students = {}
+        self.books = {}
+        self.filename = "library_data.csv"  # CSV file to store data
 
     def add_student(self, reg_number, name):
-        """Add a new student to the database."""
         if reg_number not in self.students:
             self.students[reg_number] = {
                 'name': name,
-                'history': [],       # List to track book issues history
-                'fine_amount': 0.0,  # Fine amount (initially zero)
-                'status': 'Active'   # Current status of book issues
+                'history': [],
+                'fine_amount': 0.0,
+                'status': 'Active'
             }
             print(f"Student {name} with registration number {reg_number} added successfully.")
+            self.write_data_to_csv()
         else:
             print(f"Student with registration number {reg_number} already exists.")
 
     def add_book(self, book_id, title, author, pub_year, buying_year):
-        """Add a new book to the database."""
         if book_id not in self.books:
             self.books[book_id] = {
                 'title': title,
                 'author': author,
                 'publication_year': pub_year,
                 'buying_year': buying_year,
-                'times_issued': 0  # Number of times issued (initially zero)
+                'times_issued': 0
             }
             print(f"Book '{title}' by {author} added successfully with ID {book_id}.")
+            self.write_data_to_csv()
         else:
             print(f"Book with ID {book_id} already exists.")
 
     def issue_book(self, reg_number, book_id):
-        """Allow a student to issue a book."""
         if reg_number in self.students and book_id in self.books:
             if self.students[reg_number]['status'] == 'Active':
-                if self.books[book_id]['times_issued'] < 2:  # Max two times issue limit per book
+                if self.books[book_id]['times_issued'] < 2:
                     self.students[reg_number]['history'].append({
                         'book_id': book_id,
-                        'issue_date': 'today',  # Placeholder for actual issue date
+                        'issue_date': 'today',
                     })
                     self.books[book_id]['times_issued'] += 1
                     print(f"Book '{self.books[book_id]['title']}' issued to {self.students[reg_number]['name']} successfully.")
+                    self.write_data_to_csv()
                 else:
                     print(f"Book '{self.books[book_id]['title']}' has already been issued twice and cannot be issued further.")
             else:
@@ -49,21 +52,33 @@ class LibraryManagementSystem:
             print("Invalid student registration number or book ID.")
 
     def return_book(self, reg_number, book_id):
-        """Allow a student to return a book."""
         if reg_number in self.students and book_id in self.books:
             for issue in self.students[reg_number]['history']:
                 if issue['book_id'] == book_id:
                     self.students[reg_number]['history'].remove(issue)
                     self.books[book_id]['times_issued'] -= 1
                     print(f"Book '{self.books[book_id]['title']}' returned by {self.students[reg_number]['name']} successfully.")
+                    self.write_data_to_csv()
                     break
             else:
                 print(f"Student {self.students[reg_number]['name']} did not issue this book.")
         else:
             print("Invalid student registration number or book ID.")
 
+    def write_data_to_csv(self):
+        with open(self.filename, 'w', newline='') as file:
+            writer = csv.writer(file)
+            # Write student data
+            writer.writerow(['Registration Number', 'Name', 'Status', 'Fine Amount'])
+            for reg_number, details in self.students.items():
+                writer.writerow([reg_number, details['name'], details['status'], details['fine_amount']])
+            
+            # Write book data
+            writer.writerow(['Book ID', 'Title', 'Author', 'Times Issued'])
+            for book_id, details in self.books.items():
+                writer.writerow([book_id, details['title'], details['author'], details['times_issued']])
+
     def display_student_details(self, reg_number):
-        """Display details of a specific student."""
         if reg_number in self.students:
             student = self.students[reg_number]
             print(f"Name: {student['name']}")
@@ -79,7 +94,6 @@ class LibraryManagementSystem:
             print("Student not found.")
 
     def display_book_details(self, book_id):
-        """Display details of a specific book."""
         if book_id in self.books:
             book = self.books[book_id]
             print(f"Title: '{book['title']}'")
@@ -90,28 +104,9 @@ class LibraryManagementSystem:
         else:
             print("Book not found.")
 
+lib=LibraryManagementSystem()
+k="Periyar EVR Library"
+print(k.center(60,'='))
 
-# Example usage:
-library_system = LibraryManagementSystem()
-
-# Adding students
-library_system.add_student(1001, "Alice")
-library_system.add_student(1002, "Bob")
-
-# Adding books
-library_system.add_book(2001, "Introduction to Python", "John Smith", 2020, 2021)
-library_system.add_book(2002, "Data Structures and Algorithms", "Jane Doe", 2019, 2020)
-
-# Issuing books
-library_system.issue_book(1001, 2001)
-library_system.issue_book(1002, 2002)
-
-# Displaying student and book details
-library_system.display_student_details(1001)
-library_system.display_student_details(1002)
-library_system.display_book_details(2001)
-library_system.display_book_details(2002)
-
-# Returning a book
-library_system.return_book(1001, 2001)
-library_system.display_book_details(2001)
+print(f"\n{'Login/Sign-in' :>60}")
+print()
