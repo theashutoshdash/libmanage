@@ -73,3 +73,4 @@ def emp_page():
                 print("\nEnter valid choice (1-3)\n")
         except :
             print("\nEnter Integer Value\n") 
+login()
