@@ -7,11 +7,7 @@ class LibraryManagementSystem:
         self.books = {}
         self.student_filename = "students.csv"
         self.book_filename = "books.csv"
-
-        # Load existing student data from CSV
         self.load_students_from_csv()
-
-        # Load existing book data from CSV
         self.load_books_from_csv()
 
     def load_students_from_csv(self):
@@ -23,10 +19,9 @@ class LibraryManagementSystem:
                         'name': row['Name'],
                         'status': row['Status'],
                         'fine_amount': float(row['Fine Amount']),
-                        'history': []  # Initialize history list
+                        'history': [] 
                     }
         except FileNotFoundError:
-            # File does not exist yet, will be created when writing data
             pass
 
     def load_books_from_csv(self):
@@ -40,7 +35,6 @@ class LibraryManagementSystem:
                         'times_issued': int(row['Times Issued'])
                     }
         except FileNotFoundError:
-            # File does not exist yet, will be created when writing data
             pass
     def stu_page(self):
         selector = True
@@ -78,8 +72,7 @@ class LibraryManagementSystem:
         while selector:
             print("Welcome to VIT Central Library - Employee Panel")
             print("1) Add Book")
-            print("2) Update Shelf")
-            print("3) Exit\n")
+            print("2) Exit\n")
             try:
                 aff = int(input("Enter choice : "))
                 if aff == 1:
@@ -88,9 +81,6 @@ class LibraryManagementSystem:
                     author = input("Enter Author: ")
                     self.add_book(book_id, title, author)
                 elif aff == 2:
-                    # Implement shelf update
-                    pass
-                elif aff == 3:
                     selector = False
                 else:
                     print("\nEnter valid choice (1-3)\n")
@@ -117,7 +107,7 @@ class LibraryManagementSystem:
                 'name': name,
                 'status': 'Active',
                 'fine_amount': 0.0,
-                'history': []  # Initialize history list
+                'history': [] 
             }
             print(f"Student {name} with registration number {reg} added successfully.")
             self.write_students_to_csv()
@@ -146,8 +136,8 @@ class LibraryManagementSystem:
                     })
                     self.books[book_id]['times_issued'] += 1
                     print(f"Book '{self.books[book_id]['title']}' issued to {self.students[reg_number]['name']} successfully.")
-                    self.write_students_to_csv()  # Update student data
-                    self.write_books_to_csv()     # Update book data
+                    self.write_students_to_csv()  
+                    self.write_books_to_csv()     
                 else:
                     print(f"Book '{self.books[book_id]['title']}' has already been issued twice and cannot be issued further.")
             else:
@@ -162,8 +152,8 @@ class LibraryManagementSystem:
                     self.students[reg_number]['history'].remove(issue)
                     self.books[book_id]['times_issued'] -= 1
                     print(f"Book '{self.books[book_id]['title']}' returned by {self.students[reg_number]['name']} successfully.")
-                    self.write_students_to_csv()  # Update student data
-                    self.write_books_to_csv()     # Update book data
+                    self.write_students_to_csv()  
+                    self.write_books_to_csv()     
                     break
             else:
                 print(f"Student {self.students[reg_number]['name']} did not issue this book.")
@@ -229,7 +219,7 @@ class LibraryManagementSystem:
                     print("Invalid Registration Number")
     def search_book(self, query):
         found_books = []
-        query = query.lower()  # Convert query to lowercase for case-insensitive search
+        query = query.lower()  
 
         for book_id, details in self.books.items():
             title = details['title'].lower()
@@ -251,15 +241,13 @@ class LibraryManagementSystem:
                 if self.students[reg_number]['fine_amount'] < 0:
                     self.students[reg_number]['fine_amount'] = 0
                 print(f"Fine payment of ${amount} successful.")
-                self.write_students_to_csv()  # Update student data
+                self.write_students_to_csv()  
             else:
                 print("Invalid payment amount. Payment should be greater than zero.")
         else:
             print("Student not found.")
 
-    
 
-# Example usage
 lib = LibraryManagementSystem()
 k = "Periyar EVR Library"
 print(k.center(60, '='))
