@@ -107,11 +107,13 @@ class LibraryManagementSystem:
         if reg_number in self.students:
             if self.students[reg_number]['name'] == name:
                 print(f"Login successful. Welcome, {name}!")
+                self.stu_page()
             else:
                 print("Invalid credentials. Login failed.")
         else:
+            print("Account does not exist \nSignup")
             self.signup()
-    def login():
+    def login(self):
         selector=True
         print("Select affiliation")
         print("1) Student")
@@ -122,32 +124,31 @@ class LibraryManagementSystem:
                 if(aff==1):
                     nu=input("Username: ")
                     re=input("Password: ")
-                    signup_or_login(nu,re)
+                    self.signup_or_login(nu,re)
                     selector=False
                 elif(aff==2):
-                    nu=input("Username: ")
-                    re=input("Password: ")
-                    signup_or_login(nu,re)
-                    #employee ka alag kar signin aur login
+                    self.emp_page()
                     selector=False
                 else:
                     print("Enter valid value")
             except :
                 print("Enter Integer Value") 
-    def signup():
+    def signup(self):
         regx=True
         name=str(input("Enter Name : "))
         while(regx):
             reg=str(input("Enter Registration Number : "))
             if(re.match('[1-2][0-9][A-Za-z]{3}[0-9]{4}',reg)):
                 if(int(reg[-4:])>0):
-                    self.add_student(reg, name)                                       
+                    self.add_student(reg, name)
+                    print("Successful Registration!")
+                    self.stu_page()                                      
             if(regx):
                 print("Invalid Registration Number")
-    def stu_page():
+    def stu_page(self):
         selector=True
         while(selector):
-            print(f{'Welcome to VIT Central Library'})
+            print('Welcome to VIT Central Library')
             print("1) Issue\n2) Search\n3) Return\n4) Fine Payment\n5) Exit")
             try:
                 ch=int(input("Enter choice : "))
@@ -164,30 +165,33 @@ class LibraryManagementSystem:
                     self.fine_payment()
                     pass                                        
                 elif(ch==5):
+                    selector=False
                     self.login()
                 else:
-                    print("\nEnter valid choice (Between 1 and 4)\n")
+                    print("\nEnter valid choice (Between 1 and 5)\n")
             except :
                 print("\nEnter Integer Value\n") 
-    def emp_page():
+    def emp_page(self):
         selector=True
         while(selector):
             print("Enter Choice")
             print("1) Add Book")
-            print("2) Update Shelf")
-            print("3) Exit")
+            print("2) Exit")
             try:
                 aff=int(input("Enter choice : "))
                 if(aff==1):
-                    self.add_book()                                      
+                    title=str(input("Title : "))
+                    author=str(input("Author : "))
+                    bookid=str(input("Book ID : "))
+                    pub_yr=int(input("Publishing Year : "))
+                    buy_yr=int(input("Buying Year : "))
+                    self.add_book(bookid,title,author,pub_yr,buy_yr)                                      
                     pass
                 elif(aff==2):
-                    self.update_shelf()                                      
-                    pass
-                elif(aff==3):
+                    selector=False
                     self.login()
                 else:
-                    print("\nEnter valid choice (1-3)\n")
+                    print("\nEnter valid choice (1 or 2)\n")
             except :
                 print("\nEnter Integer Value\n") 
 
@@ -195,6 +199,6 @@ class LibraryManagementSystem:
 lib=LibraryManagementSystem()
 k="Periyar EVR Library"
 print(k.center(60,'='))
-self.login()
+lib.login()
 
 
