@@ -102,6 +102,7 @@ class LibraryManagementSystem:
             print(f"Number of Times Issued: {book['times_issued']}")
         else:
             print("Book not found.")
+    
     def signup_or_login(self, name, reg_number):
         if reg_number in self.students:
             if self.students[reg_number]['name'] == name:
@@ -109,30 +110,30 @@ class LibraryManagementSystem:
             else:
                 print("Invalid credentials. Login failed.")
         else:
-            self.add_student(reg_number, name)
-            print(f"Signup successful. Welcome, {name}!")
+            self.signup()
     def login():
-    selector=True
-    print("Select affiliation")
-    print("1) Student")
-    print("2) Employee")
-    while(selector):
-        try:
-            aff=int(input("Enter choice : "))
-            if(aff==1):
-                nu=input("Username: ")
-                re=input("Password: ")
-                signup_or_login(nu,re)
-                selector=False
-            elif(aff==2):
-                nu=input("Username: ")
-                re=input("Password: ")
-                signup_or_login(nu,re)
-                selector=False
-            else:
-                print("Enter valid value")
-        except :
-            print("Enter Integer Value") 
+        selector=True
+        print("Select affiliation")
+        print("1) Student")
+        print("2) Employee")
+        while(selector):
+            try:
+                aff=int(input("Enter choice : "))
+                if(aff==1):
+                    nu=input("Username: ")
+                    re=input("Password: ")
+                    signup_or_login(nu,re)
+                    selector=False
+                elif(aff==2):
+                    nu=input("Username: ")
+                    re=input("Password: ")
+                    signup_or_login(nu,re)
+                    #employee ka alag kar signin aur login
+                    selector=False
+                else:
+                    print("Enter valid value")
+            except :
+                print("Enter Integer Value") 
     def signup():
         regx=True
         name=str(input("Enter Name : "))
@@ -163,7 +164,7 @@ class LibraryManagementSystem:
                     self.fine_payment()
                     pass                                        
                 elif(ch==5):
-                    selector=False
+                    self.login()
                 else:
                     print("\nEnter valid choice (Between 1 and 4)\n")
             except :
@@ -184,7 +185,7 @@ class LibraryManagementSystem:
                     self.update_shelf()                                      
                     pass
                 elif(aff==3):
-                    selector=False
+                    self.login()
                 else:
                     print("\nEnter valid choice (1-3)\n")
             except :
@@ -194,6 +195,6 @@ class LibraryManagementSystem:
 lib=LibraryManagementSystem()
 k="Periyar EVR Library"
 print(k.center(60,'='))
-
+self.login()
 
 
