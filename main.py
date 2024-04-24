@@ -187,25 +187,31 @@ class LibraryManagementSystem:
             print(f"Signup successful. Welcome, {name}!")
 
     def login(self):
-        selector = True
-        print("Select affiliation")
-        print("1) Student")
-        print("2) Employee")
-        while selector:
-            try:
-                aff = int(input("Enter choice : "))
-                if aff == 1:
-                    nu = input("Username: ")
-                    re = input("Password: ")
-                    self.signup_or_login(nu, re)
-                    selector = False
-                elif aff == 2:
-                    self.emp_page()
-                else:
-                    print("Enter valid value")
-            except ValueError:
-                print("Enter Integer Value")
-
+        loop=True
+        while(loop):
+            selector=True
+            print("Select affiliation")
+            print("1) Student")
+            print("2) Employee")
+            print("3) Exit ")
+            while(selector):
+                try:
+                    aff=int(input("Enter choice : "))
+                    if(aff==1):
+                        nu=input("Username: ")
+                        re=input("Password: ")
+                        self.signup_or_login(nu,re)
+                        selector=False
+                    elif(aff==2):
+                        self.emp_page()
+                        selector=False
+                    elif(aff==3):
+                        loop=False
+                        selector=False
+                    else:
+                        print("Enter valid value")
+                except :
+                    print("Enter Integer Value") 
     def signup(self):
         regx = True
         name = str(input("Enter Name : "))
