@@ -183,7 +183,7 @@ class LibraryManagementSystem:
             else:
                 print("Invalid credentials. Login failed.")
         else:
-            self.add_student(reg_number, name)
+            self.signup()
             print(f"Signup successful. Welcome, {name}!")
 
     def login(self):
@@ -214,7 +214,13 @@ class LibraryManagementSystem:
                     print("Enter Integer Value") 
     def signup(self):
         regx = True
-        name = str(input("Enter Name : "))
+        nametst=True
+        while(nametst):
+            name = str(input("Enter Name : "))
+            if re.compiler('^[A-Za-z\s]+$',name):
+                nametst=False
+            else:
+                print('Invalid Name')
         while regx:
             reg = str(input("Enter Registration Number : "))
             if re.match('[1-2][0-9][A-Za-z]{3}[0-9]{4}', reg):
