@@ -5,32 +5,134 @@ class LibraryManagementSystem:
     def __init__(self):
         self.students = {}
         self.books = {}
-        self.filename = "library_data.csv"  
+        self.student_filename = "students.csv"
+        self.book_filename = "books.csv"
+
+        # Load existing student data from CSV
+        self.load_students_from_csv()
+
+        # Load existing book data from CSV
+        self.load_books_from_csv()
+
+    def load_students_from_csv(self):
+        try:
+            with open(self.student_filename, 'r') as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    self.students[row['Registration Number']] = {
+                        'name': row['Name'],
+                        'status': row['Status'],
+                        'fine_amount': float(row['Fine Amount']),
+                        'history': []  # Initialize history list
+                    }
+        except FileNotFoundError:
+            # File does not exist yet, will be created when writing data
+            pass
+
+    def load_books_from_csv(self):
+        try:
+            with open(self.book_filename, 'r') as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    self.books[row['Book ID']] = {
+                        'title': row['Title'],
+                        'author': row['Author'],
+                        'times_issued': int(row['Times Issued'])
+                    }
+        except FileNotFoundError:
+            # File does not exist yet, will be created when writing data
+            pass
+    def stu_page(self):
+        selector = True
+        while selector:
+            print('Welcome to VIT Central Library')
+            print("1) Issue\n2) Search\n3) Return\n4) Fine Payment\n5) Dashboard\n6) Exit\n")
+            try:
+                ch = int(input("Enter choice : "))
+                if ch == 1:
+                    reg_number = input("Enter Registration Number: ")
+                    book_id = input("Enter Book ID: ")
+                    self.issue_book(reg_number, book_id)
+                elif ch == 2:
+                    self.search_book()
+                    pass
+                elif ch == 3:
+                    reg_number = input("Enter Registration Number: ")
+                    book_id = input("Enter Book ID: ")
+                    self.return_book(reg_number, book_id)
+                elif ch == 4:
+                    self.fine_payment()
+                    pass
+                elif ch == 5:
+                    reg_number = input("Enter Registration Number: ")
+                    self.display_student_details(reg_number)
+                elif ch == 6:
+                    selector = False
+                else:
+                    print("\nEnter valid choice (Between 1 and 6)\n")
+            except ValueError:
+                print("\nEnter Integer Value\n")
+
+    def emp_page(self):
+        selector = True
+        while selector:
+            print("Welcome to VIT Central Library - Employee Panel")
+            print("1) Add Book")
+            print("2) Update Shelf")
+            print("3) Exit\n")
+            try:
+                aff = int(input("Enter choice : "))
+                if aff == 1:
+                    book_id = input("Enter Book ID: ")
+                    title = input("Enter Title: ")
+                    author = input("Enter Author: ")
+                    self.add_book(book_id, title, author)
+                elif aff == 2:
+                    # Implement shelf update
+                    pass
+                elif aff == 3:
+                    selector = False
+                else:
+                    print("\nEnter valid choice (1-3)\n")
+            except ValueError:
+                print("\nEnter Integer Value\n")
+
+    def write_students_to_csv(self):
+        with open(self.student_filename, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Registration Number', 'Name', 'Status', 'Fine Amount'])
+            for reg_number, details in self.students.items():
+                writer.writerow([reg_number, details['name'], details['status'], details['fine_amount']])
+
+    def write_books_to_csv(self):
+        with open(self.book_filename, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Book ID', 'Title', 'Author', 'Times Issued'])
+            for book_id, details in self.books.items():
+                writer.writerow([book_id, details['title'], details['author'], details['times_issued']])
 
     def add_student(self, reg, name):
         if reg not in self.students:
             self.students[reg] = {
                 'name': name,
-                'history': [],
+                'status': 'Active',
                 'fine_amount': 0.0,
-                'status': 'Active'
+                'history': []  # Initialize history list
             }
             print(f"Student {name} with registration number {reg} added successfully.")
-            self.write_data_to_csv()
+            self.write_students_to_csv()
         else:
             print(f"Student with registration number {reg} already exists.")
 
-    def add_book(self, book_id, title, author, pub_year, buying_year):
+    def add_book(self, book_id, title, author):
         if book_id not in self.books:
             self.books[book_id] = {
                 'title': title,
                 'author': author,
-                'publication_year': pub_year,
-                'buying_year': buying_year,
                 'times_issued': 0
             }
             print(f"Book '{title}' by {author} added successfully with ID {book_id}.")
-            self.write_data_to_csv()
+            self.write_books_to_csv()
         else:
             print(f"Book with ID {book_id} already exists.")
 
@@ -44,7 +146,8 @@ class LibraryManagementSystem:
                     })
                     self.books[book_id]['times_issued'] += 1
                     print(f"Book '{self.books[book_id]['title']}' issued to {self.students[reg_number]['name']} successfully.")
-                    self.write_data_to_csv()
+                    self.write_students_to_csv()  # Update student data
+                    self.write_books_to_csv()     # Update book data
                 else:
                     print(f"Book '{self.books[book_id]['title']}' has already been issued twice and cannot be issued further.")
             else:
@@ -59,23 +162,13 @@ class LibraryManagementSystem:
                     self.students[reg_number]['history'].remove(issue)
                     self.books[book_id]['times_issued'] -= 1
                     print(f"Book '{self.books[book_id]['title']}' returned by {self.students[reg_number]['name']} successfully.")
-                    self.write_data_to_csv()
+                    self.write_students_to_csv()  # Update student data
+                    self.write_books_to_csv()     # Update book data
                     break
             else:
                 print(f"Student {self.students[reg_number]['name']} did not issue this book.")
         else:
             print("Invalid student registration number or book ID.")
-
-    def write_data_to_csv(self):
-        with open(self.filename, 'w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(['Registration Number', 'Name', 'Status', 'Fine Amount'])
-            for reg_number, details in self.students.items():
-                writer.writerow([reg_number, details['name'], details['status'], details['fine_amount']])
-            
-            writer.writerow(['Book ID', 'Title', 'Author', 'Times Issued'])
-            for book_id, details in self.books.items():
-                writer.writerow([book_id, details['title'], details['author'], details['times_issued']])
 
     def display_student_details(self, reg_number):
         if reg_number in self.students:
@@ -91,18 +184,7 @@ class LibraryManagementSystem:
             print(f"Status: {student['status']}")
         else:
             print("Student not found.")
-
-    def display_book_details(self, book_id):
-        if book_id in self.books:
-            book = self.books[book_id]
-            print(f"Title: '{book['title']}'")
-            print(f"Author: {book['author']}")
-            print(f"Publication Year: {book['publication_year']}")
-            print(f"Buying Year: {book['buying_year']}")
-            print(f"Number of Times Issued: {book['times_issued']}")
-        else:
-            print("Book not found.")
-    
+            
     def signup_or_login(self, name, reg_number):
         if reg_number in self.students:
             if self.students[reg_number]['name'] == name:
@@ -111,94 +193,74 @@ class LibraryManagementSystem:
             else:
                 print("Invalid credentials. Login failed.")
         else:
-            print("Account does not exist \nSignup")
-            self.signup()
+            self.add_student(reg_number, name)
+            print(f"Signup successful. Welcome, {name}!")
+
     def login(self):
-        selector=True
+        selector = True
         print("Select affiliation")
         print("1) Student")
         print("2) Employee")
-        while(selector):
+        while selector:
             try:
-                aff=int(input("Enter choice : "))
-                if(aff==1):
-                    nu=input("Username: ")
-                    re=input("Password: ")
-                    self.signup_or_login(nu,re)
-                    selector=False
-                elif(aff==2):
+                aff = int(input("Enter choice : "))
+                if aff == 1:
+                    nu = input("Username: ")
+                    re = input("Password: ")
+                    self.signup_or_login(nu, re)
+                    selector = False
+                elif aff == 2:
                     self.emp_page()
-                    selector=False
                 else:
                     print("Enter valid value")
-            except :
-                print("Enter Integer Value") 
+            except ValueError:
+                print("Enter Integer Value")
+
     def signup(self):
-        regx=True
-        name=str(input("Enter Name : "))
-        while(regx):
-            reg=str(input("Enter Registration Number : "))
-            if(re.match('[1-2][0-9][A-Za-z]{3}[0-9]{4}',reg)):
-                if(int(reg[-4:])>0):
+        regx = True
+        name = str(input("Enter Name : "))
+        while regx:
+            reg = str(input("Enter Registration Number : "))
+            if re.match('[1-2][0-9][A-Za-z]{3}[0-9]{4}', reg):
+                if int(reg[-4:]) > 0:
                     self.add_student(reg, name)
-                    print("Successful Registration!")
-                    self.stu_page()                                      
-            if(regx):
-                print("Invalid Registration Number")
-    def stu_page(self):
-        selector=True
-        while(selector):
-            print('Welcome to VIT Central Library')
-            print("1) Issue\n2) Search\n3) Return\n4) Fine Payment\n5) Exit")
-            try:
-                ch=int(input("Enter choice : "))
-                if(ch==1):
-                    pass
-                    self.issue_book()                                          
-                elif(ch==2):
-                    pass
-                    self.search()                                        
-                elif(ch==3):
-                    self.book_return()
-                    pass                                         
-                elif(ch==4):
-                    self.fine_payment()
-                    pass                                        
-                elif(ch==5):
-                    selector=False
-                    self.login()
+                    regx = False
                 else:
-                    print("\nEnter valid choice (Between 1 and 5)\n")
-            except :
-                print("\nEnter Integer Value\n") 
-    def emp_page(self):
-        selector=True
-        while(selector):
-            print("Enter Choice")
-            print("1) Add Book")
-            print("2) Exit")
-            try:
-                aff=int(input("Enter choice : "))
-                if(aff==1):
-                    title=str(input("Title : "))
-                    author=str(input("Author : "))
-                    bookid=str(input("Book ID : "))
-                    pub_yr=int(input("Publishing Year : "))
-                    buy_yr=int(input("Buying Year : "))
-                    self.add_book(bookid,title,author,pub_yr,buy_yr)                                      
-                    pass
-                elif(aff==2):
-                    selector=False
-                    self.login()
-                else:
-                    print("\nEnter valid choice (1 or 2)\n")
-            except :
-                print("\nEnter Integer Value\n") 
+                    print("Invalid Registration Number")
+    def search_book(self, query):
+        found_books = []
+        query = query.lower()  # Convert query to lowercase for case-insensitive search
 
+        for book_id, details in self.books.items():
+            title = details['title'].lower()
+            author = details['author'].lower()
 
-lib=LibraryManagementSystem()
-k="Periyar EVR Library"
-print(k.center(60,'='))
+            if query in title or query in author:
+                found_books.append((book_id, details['title'], details['author']))
+
+        if found_books:
+            print("Search Results:")
+            for book_id, title, author in found_books:
+                print(f"Book ID: {book_id}, Title: '{title}', Author: {author}")
+        else:
+            print("No books found matching the search query.")
+    def fine_payment(self, reg_number, amount):
+        if reg_number in self.students:
+            if amount > 0:
+                self.students[reg_number]['fine_amount'] -= amount
+                if self.students[reg_number]['fine_amount'] < 0:
+                    self.students[reg_number]['fine_amount'] = 0
+                print(f"Fine payment of ${amount} successful.")
+                self.write_students_to_csv()  # Update student data
+            else:
+                print("Invalid payment amount. Payment should be greater than zero.")
+        else:
+            print("Student not found.")
+
+    
+
+# Example usage
+lib = LibraryManagementSystem()
+k = "Periyar EVR Library"
+print(k.center(60, '='))
 lib.login()
-
-
